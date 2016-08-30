@@ -1,0 +1,473 @@
+Go
+A Practical Programming Language
+31 Aug 2016
+Tags: programming, go, introduction
+
+Nils Lagerkvist
+Cloud Platform, Viaplay
+nils.lagerkvist@viaplay.com
+http://github.com/otm
+
+* Introduction
+
+- Compiled
+- Concurrent
+- Garbage-collected
+- Statically typed
+- First class functions
+- Higher-order functions
+- Closures
+- Multiple return values
+- Open source
+- Developed at Google
+
+* Designed for Productivity
+
+* Writing Code vs. Maintaining Code
+
+* Small Language
+
+Only 25 keywords in the language
+
+ break        default      func         interface    select
+ case         defer        go           map          struct
+ chan         else         goto         package      switch
+ const        fallthrough  if           range        type
+ continue     for          import       return       var
+
+* Gofmt style is no ones favorite, yet gofmt is everyones favorite.
+
+* Clear is better then clever
+
+* Design the architecture, name the components, document the details.
+
+* Hello World
+- Create your workspace
+ mkdir ~/go
+- Set your GOPATH
+ export GOPATH=~/go
+- Create your package. *$GOPATH/src/github.com/otm/helloworld/main.go*
+.play helloWorld/helloWorld.go
+
+*Tip:* Add the Go bin directory to your path
+
+ export PATH=$PATH:$GOPATH/bin
+
+* Compiling and Running Go
+- Compile:
+ go build
+- Installing:
+ go install
+- Getting packages
+ go get github.com/otm/helloworld
+- Running Go files
+ go run path/to/file.go
+
+* Packages
+
+- Source code is located in `$GOPATH/src`
+- All files in a directory belongs to the same package
+- No difference for the compiler if there is one or several files in a directory
+- *package* *main* creates an executable
+- Library directory *name* should be the same as *package* *name*
+
+* Package - Example
+A Go package in:
+
+ stash.mtg.com/vp_mod/http
+
+Would have a the following package statement
+
+ package http
+
+And imported as:
+
+ import "stash.mtg.com/vp_mod/http"
+
+* Variables
+- Normal definition
+
+ var foo string
+
+- Shorthand
+
+ foo := "bar"
+
+- Shorthand definition is preferred
+
+* Zero Values
+.play zerovalues/zerovalues.go /^func main/,/^}/
+- Make zero values useful
+- Examples in stdlib: `sync.Mutex` and `bytes.Buffer`
+
+
+* Constants
+- Constants can be
+ rune, integer, floating-point, imaginary, or string
+
+- Defined with the *const* keyword
+ const version = "1.2.3"
+
+- iota - simplify definitions of incrementing numbers
+ type ByteSize float64
+
+ const (
+    _           = iota
+    KB ByteSize = 1 << (10 * iota)
+    MB
+    GB
+    TB
+    PB
+ )
+
+* Control Structures: If
+ if x > 0 {
+    return y
+ }
+
+- Accepts an initialization statement
+
+ if err := file.Chmod(0664); err != nil {
+    // handle error
+ }
+
+* Control Structures: For
+- Unifies for and while
+- No do-while
+- Like a C for
+
+ for i := 0; i < 10; i++ { }
+
+- Like a C while
+
+ for i < 10 { }
+
+- Like a C for(;;)
+
+ for { }
+
+* Control Structure: Switch
+- No automatic fallthrough
+ switch c {
+ case 'i':
+    return 'I'
+ case ' ', '?', '&', '=', '#', '+', '%':
+    return '-'
+ }
+- if-else chains
+ switch {
+ case '0' <= c && c <= '9':
+     return c - '0'
+ case 'a' <= c && c <= 'f':
+     return c - 'a' + 10
+ case 'A' <= c && c <= 'F':
+     return c - 'A' + 10
+ }
+ return 0
+
+- Type switching can be done on interfaces
+
+* Functions
+- Function with one return value
+
+ func add(x, y int) int {}
+
+- Function with multiple returns
+
+ func divide(x, y int) (int, error) {}
+
+- Function with named returns
+
+ func divide(x, y int) (sum int, err error) {}
+
+- Creating a closure
+ add := func(x, y int) int {}
+
+* Functions
+- Single return
+
+ sum := add(1, 2)
+
+- Multiple returns
+
+ sum, err := divide(1, 2)
+
+- Ommiting results
+
+ _, err := divide(1, 2)
+
+* Handle errors gracefully
+
+* Errors are values
+
+- No Exceptions
+- Promotes error handling to the normal flow
+- Error handling becomes explicit
+- Forces the developer to think about errors
+- Handle errors early
+ f, err := os.Open("filename.ext")
+ if err != nil {
+    // handle error
+ }
+- Further reading:
+.link https://blog.golang.org/error-handling-and-go
+
+* Types
+- Two types are either _identical_ or _different_.
+- No type hierarchy.
+- Each type T has an _underlying_ _type_.
+
+* Basic Types
+ bool
+
+ string
+
+ int  int8  int16  int32  int64
+ uint uint8 uint16 uint32 uint64 uintptr
+
+ byte // alias for uint8
+
+ rune // alias for int32
+      // represents a Unicode code point
+
+ float32 float64
+
+ complex64 complex128
+
+* Collection Types: Arrays
+
+- Arrays
+ var a1 [2]int
+ var a2 [3]int
+
+- The array length is part of the type
+
+- Assigning to an array
+ a1[0] = "foo"
+
+- Declaring and assigning
+ a := [2]int{10, 20}
+
+* Collection Types: Slices
+
+- Making a slice
+ s1 := make([]int)       // len = 0, cap = 0
+ s2 := make([]int, 1)    // len = 1, cap = 1
+ s3 := make([]int, 1, 5) // len = 1, cap = 5
+
+- Assigning to a slice
+ s2[0] = 10
+
+- Appending to a slice
+ s1 = append(s1, 10)
+
+- Declaring and assigning
+ s4 := []int{10, 20, 30}
+
+*Beware:* Slices contains an internal pointer
+
+* Collection Types: Map
+- Making a map
+ m1 := make(map[string]string)
+
+- Assigning to a map
+ m1["foo"] = "bar"
+
+- Map keys may be of any type that is _comparable_
+ boolean, numeric, string, pointer, channel, interfaces, structs or arrays
+
+*Beware:* Maps contains an internal pointer
+
+* Types: Structs
+- Struct are similar to objects
+- Creating a struct type
+ type person struct {
+    name string
+    age  int
+ }
+
+- No *new* keyword
+- Initializing a struct
+ p := person{name: "Foo Bar", age: 30}
+
+- Factory functions are used instead
+ newPerson(name string, age int) person {
+    return person{name: name, age: age}
+ }
+
+* Types: Structs
+- Method receivers
+ func (p person) String() string {
+    return p.name + " is " + p.age + " years old"
+ }
+
+- Calling struct methods
+ p := person{name: "Foo Bar", age: 30}
+ p.String()
+
+
+* Types: Underlaying Types
+- Creating a celsius type from an integer
+  type celsius int
+
+- Creating a persons type
+ type persons []person
+
+- Creating a person map
+ type persons map[string]person
+
+* Exporting Types and Function
+- No public, private or protected
+- Exported or not exported
+- Capitalized names are exported
+ type Celcius int
+ func Add(x, y int) int {}
+ const Version = "1.2.3"
+ var ALongTimeAgo = time.Unix(233431200, 0)
+
+* Pointers
+- Calling methods *always* copies values
+- To prevent copying values pointers can be used
+- Creating a pointer
+ i := new(int)
+ p := new(person)
+
+- *&* returns the address
+ p := &person{name: "Foo Bar", age: 30}
+
+- Pointers are automatically dereferenced
+ p.String()
+
+- *** returns the value
+  fmt.Println(p)  // prints memory address
+  fmt.Println(*p) // prints value
+
+* Pointers and Functions
+- Pointer types
+ p1 := person{}  // type: person
+ p2 := &person{} // type: *person
+
+- Declare a function
+ func copyPerson(p *person) *person {}
+
+- Calling functions
+ copyPerson(&p1)
+
+ copyPerson(p2)
+
+* Composition over Inheritance
+
+- No inheritance
+- No type hierarchy
+- Types automatically satisfies all implemented interfaces
+
+
+
+* Interfaces - Example
+The Stringer interface in the stdlib
+
+ type Stringer interface {
+    String() string
+ }
+.play interface/interface.go
+
+* Export types, Consume interfaces
+
+* Concurrency
+- Go executes code synchronously
+- A goroutine is a function that runs concurrently
+- A goroutine is created by the keyword *go* followed by a function invocation
+ go fmt.Println("foo")
+- Closures can be defined and executed in one statement
+ go func(){...}()
+- Return values in goroutine does not make sense
+- The *main* function is a special goroutine
+
+* Goroutines - Example
+
+.play goRoutine/goRoutine.go
+
+* Don't communicate by sharing memory, share memory by communicating
+
+* Channels
+- Modeled after CSP (Communicating Sequential Processes)
+- Channels orchestrate
+.play channels/channel.go
+
+* Channels: Worker
+.code channels/channels2.go /^func consumer/,/^}/
+
+
+* Channels: Producer
+.play channels/channels2.go /^func producer/,/^}/
+
+* Testing
+
+- Simple and extensible testing architecture
+- Test files are suffixed with `_test.go`
+.code tests/main_test.go
+
+* Testing - Benchmarks
+
+- Built in benchmarking in the standard library
+.code tests/benchmark_test.go /^func BenchmarkConvert10/,/^}/
+
+* Testing - Examples
+
+- Examples are run in the test suite
+
+.code tests/example_test.go /^func ExampleConvertToString/,/^}/
+
+* Documentation
+
+- Auto generated documentation that integrates with the Go documentation
+.link http://localhost:6060/pkg
+
+* Documentation - Examples
+
+- Examples are integrated in the documentation
+.link http://localhost:6060/pkg/github.com/otm/GoPresentaion/tests/
+
+* The Go Standard Library
+
+* Highlights
+
+- *archive:* tar and zip support
+- *compress:* zlib, gzip, and many more
+- *context:* signaling and request scoped values
+- *encoding:* json, xml, asn1, csv, and many more
+- *flag:* command line flag parsing
+- *go:* parsing and analyzing go code
+- *html/template:* data-driven templates for generating HTML
+- *text/template:* data-driven templates for generating textual output
+
+.link https://golang.org/pkg/
+
+* HTTP Server
+
+.link http://localhost:8080
+.play httpServer/helloWorldHttpServer.go
+
+* HTTP Server - JSON
+
+.link http://localhost:8080
+.play httpServer/helloWorldJson.go
+
+* Further Reading
+.link https://golang.org/doc/effective_go.html Effective Go
+.link https://golang.org/ref/spec The Go Language Specification
+.link https://golang.org/doc/faq The Go FAQ
+.link https://talks.golang.org/2012/splash.article Go at Google: Language Design in the Service of Software Engineering
+.link https://tour.golang.org A Tour of Go
+
+* Assignments
+*Hello-World*
+Write a simple "hello world" program
+
+*HTTP-Server*
+Write a simple "hello world" http server
+
+*HTTP-Server-with-Worker*
+- Write a server that receives a HTTP request
+- Starts a goroutine that calles time.Sleep and print a message to stdout
+- Return a response to the caller without waiting for the goroutine above
