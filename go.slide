@@ -21,6 +21,21 @@ http://github.com/otm
 - Open source
 - Developed at Google
 
+* Prominent Go Projects
+- Docker, Packer, Terraform, Kubernetes
+- Prometheus, InfluxDB
+- Grafana
+- Etcd, Consul
+- NSQ
+
+*Users* *of* *Go*
+
+- Google
+- CloudFlare
+- CoreOS
+- Dropbox
+- Netflix
+
 * Designed for Productivity
 
 * Writing Code vs. Maintaining Code
@@ -49,10 +64,6 @@ Only 25 keywords in the language
 - Create your package. *$GOPATH/src/github.com/otm/helloworld/main.go*
 .play helloWorld/helloWorld.go
 
-*Tip:* Add the Go bin directory to your path
-
- export PATH=$PATH:$GOPATH/bin
-
 * Compiling and Running Go
 - Compile:
  go build
@@ -62,6 +73,10 @@ Only 25 keywords in the language
  go get github.com/otm/helloworld
 - Running Go files
  go run path/to/file.go
+
+*Tip:* Add the Go bin directory to your path
+
+ export PATH=$PATH:$GOPATH/bin
 
 * Packages
 
@@ -107,18 +122,6 @@ And imported as:
 
 - Defined with the *const* keyword
  const version = "1.2.3"
-
-- iota - simplify definitions of incrementing numbers
- type ByteSize float64
-
- const (
-    _           = iota
-    KB ByteSize = 1 << (10 * iota)
-    MB
-    GB
-    TB
-    PB
- )
 
 * Control Structures: If
  if x > 0 {
@@ -174,14 +177,16 @@ And imported as:
 
 - Function with multiple returns
 
- func divide(x, y int) (int, error) {}
+ func divide(x, y int) (float64, error) {}
 
 - Function with named returns
 
- func divide(x, y int) (sum int, err error) {}
+ func divide(x, y int) (fraction float64, err error) {}
 
 - Creating a closure
  add := func(x, y int) int {}
+
+- Calling methods *always* copies values
 
 * Functions
 - Single return
@@ -190,7 +195,7 @@ And imported as:
 
 - Multiple returns
 
- sum, err := divide(1, 2)
+ fraction, err := divide(1, 2)
 
 - Ommiting results
 
@@ -286,12 +291,12 @@ And imported as:
     age  int
  }
 
-- No *new* keyword
+- No constructors
 - Initializing a struct
  p := person{name: "Foo Bar", age: 30}
 
 - Factory functions are used instead
- newPerson(name string, age int) person {
+ func newPerson(name string, age int) person {
     return person{name: name, age: age}
  }
 
@@ -332,7 +337,7 @@ And imported as:
  i := new(int)
  p := new(person)
 
-- *&* returns the address
+- *&* creates a pointer to the value
  p := &person{name: "Foo Bar", age: 30}
 
 - Pointers are automatically dereferenced
@@ -426,7 +431,7 @@ The Stringer interface in the stdlib
 * Documentation - Examples
 
 - Examples are integrated in the documentation
-.link http://localhost:6060/pkg/github.com/otm/GoPresentaion/tests/
+.link http://localhost:6060/pkg/github.com/otm/gointro/tests/
 
 * The Go Standard Library
 
@@ -461,13 +466,20 @@ The Stringer interface in the stdlib
 .link https://tour.golang.org A Tour of Go
 
 * Assignments
-*Hello-World*
+.link http://goo.gl/55IQy5
+*Hello* *World*
 Write a simple "hello world" program
 
-*HTTP-Server*
+*HTTP* *Server*
 Write a simple "hello world" http server
 
-*HTTP-Server-with-Worker*
+*Phone* *Book*
+- Create a person type and catalog type
+- Print the catalog by name and age
+.link https://golang.org/pkg/sort
+
+*HTTP* *Server* *with* *Worker*
 - Write a server that receives a HTTP request
 - Starts a goroutine that calles time.Sleep and print a message to stdout
 - Return a response to the caller without waiting for the goroutine above
+- Bonus: If a message is not processed by worker in 10ms and return a error
